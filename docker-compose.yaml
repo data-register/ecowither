@@ -5,9 +5,9 @@ services:
     image: '<your_dockerhub_username>/ecowither:latest'  # Update this with your registry/image
     container_name: ecowither
     environment:
-      - APPLICATION_KEY=your_application_key_here
-      - API_KEY=your_api_key_here
-      - MAC_ADDRESS=your_mac_address_here
+      - APPLICATION_KEY=61759DF4094EBA1A61E070A285A2DAF7
+      - API_KEY=fe33f769-d487-433c-a31d-8e504df4076f
+      - MAC_ADDRESS=48:E7:29:5F:72:44
       - CALLBACK=all
       - TEMP_UNIT_ID=1
       - PRESSURE_UNIT_ID=5
