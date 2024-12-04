@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  ecowither:
+    image: '<your_dockerhub_username>/ecowither:latest'  # Update this with your registry/image
+    container_name: ecowither
+    environment:
+      - APPLICATION_KEY=your_application_key_here
+      - API_KEY=your_api_key_here
+      - MAC_ADDRESS=your_mac_address_here
+      - CALLBACK=all
+      - TEMP_UNIT_ID=1
+      - PRESSURE_UNIT_ID=5
+      - WIND_SPEED_UNIT_ID=6
+      - RAINFALL_UNIT_ID=12
+      - SOLAR_IRRADIANCE_UNIT_ID=16
+    ports:
+      - '3000:3000'
+    volumes:
+      - 'ecowither_data:/data'
+    restart: unless-stopped
+    networks:
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.gzip.compress=true"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.http-ecowither.entryPoints=http"
+      - "traefik.http.routers.http-ecowither.middlewares=redirect-to-https"
+      - "traefik.http.routers.http-ecowither.rule=Host(`ecowither.obzorweather.com`)"
+      - "traefik.http.routers.http-ecowither.service=http-ecowither"
+      - "traefik.http.routers.https-ecowither.entryPoints=https"
+      - "traefik.http.routers.https-ecowither.middlewares=gzip"
+      - "traefik.http.routers.https-ecowither.rule=Host(`ecowither.obzorweather.com`) && PathPrefix(`/`)"
+      - "traefik.http.routers.https-ecowither.service=https-ecowither"
+      - "traefik.http.routers.https-ecowither.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.https-ecowither.tls=true"
+      - "traefik.http.services.http-ecowither.loadbalancer.server.port=3000"
+      - "traefik.http.services.https-ecowither.loadbalancer.server.port=3000"
+
+volumes:
+  ecowither_data:
+    driver: local
+
+networks:
+  coolify:
+    external: true
